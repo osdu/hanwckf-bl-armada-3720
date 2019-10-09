@@ -44,7 +44,7 @@
 					"scriptaddr=0x6d00000\0"	\
 					"hostname=catdrive\0"		\
 					"netdev=eth0\0"			\
-					"ethaddr=00:11:32:11:22:00\0"	\
+					"ethaddr=00:11:32:00:11:32\0"	\
 					"image_name=zImage\0"		\
 					"console=" CONFIG_DEFAULT_CONSOLE "\0"\
 				\
