@@ -25,18 +25,16 @@
 					  115200, 230400, 460800, 921600 }
 
 /* Default Env vars */
-#define CONFIG_IPADDR			0.0.0.0	/* In order to cause an error */
-#define CONFIG_SERVERIP			0.0.0.0	/* In order to cause an error */
+#define CONFIG_IPADDR			192.168.1.119	/* In order to cause an error */
+#define CONFIG_SERVERIP			192.168.1.254	/* In order to cause an error */
 #define CONFIG_NETMASK			255.255.255.0
-#define CONFIG_GATEWAYIP		10.4.50.254
+#define CONFIG_GATEWAYIP		192.168.1.254
 #define CONFIG_HAS_ETH1
 #define CONFIG_HAS_ETH2
 #define CONFIG_ETHPRIME			"eth0"
 #define CONFIG_ROOTPATH                 "/srv/nfs/" /* Default Dir for NFS */
 #define CONFIG_ENV_OVERWRITE		/* ethaddr can be reprogrammed */
-#define CONFIG_EXTRA_ENV_SETTINGS	"bootcmd=for target in ${boot_targets}; " \
-						"do run bootcmd_${target}; " \
-						"done\0" \
+#define CONFIG_EXTRA_ENV_SETTINGS	\
 					"kernel_addr=0x7000000\0"	\
 					"initrd_addr=0x1100000\0"	\
 					"initrd_size=0x2000000\0"	\
@@ -44,39 +42,27 @@
 					"loadaddr=0x8000000\0"		\
 					"fdt_high=0xffffffffffffffff\0"	\
 					"scriptaddr=0x6d00000\0"	\
-					"hostname=marvell\0"		\
-					"initrd_image=uInitrd\0"	\
-					"ramdisk_addr_r=0x8000000\0"	\
-					"ramfs_name=-\0"		\
-					"fdt_name=fdt.dtb\0"		\
+					"hostname=catdrive\0"		\
 					"netdev=eth0\0"			\
-					"ethaddr=00:51:82:11:22:00\0"	\
-					"eth1addr=00:51:82:11:22:01\0"	\
-					"eth2addr=00:51:82:11:22:02\0"	\
-					"eth3addr=00:51:82:11:22:03\0"	\
-					"image_name=Image\0"		\
+					"ethaddr=00:11:32:11:22:00\0"	\
+					"image_name=zImage\0"		\
 					"console=" CONFIG_DEFAULT_CONSOLE "\0"\
+				\
 					"boot_targets=usb mmc0 sata\0"	\
 					"boot_prefixes=/ /boot/\0"	\
-					"bootcmd_mmc0=setenv devnum 0; " \
-						"setenv boot_interface mmc; " \
-						"run scan_dev_for_boot;\0"	\
-					"bootcmd_sata=setenv devnum 0; "	\
-						"scsi scan; "	\
-						"scsi dev 0; "	\
-						"setenv boot_interface scsi; "	\
-						"run scan_dev_for_boot;\0"	\
-					"bootcmd_usb=setenv devnum 0; " \
-						"usb start; " \
-						"setenv boot_interface usb; "	\
-						"run scan_dev_for_boot;\0"	\
-					"scan_dev_for_boot=for prefix in ${boot_prefixes}; "\
-						"do echo ${prefix}; "	\
-						"run boot_a_script; "	\
-						"done\0"	\
-					"boot_a_script=ext4load ${boot_interface} "	\
-						"${devnum}:1 ${scriptaddr} ${prefix}boot.scr; "	\
-						"source ${scriptaddr};\0"
+					"boot_a_script=fatload ${boot_interface} ${devnum}:1 ${scriptaddr} ${prefix}${scriptname}; source ${scriptaddr};\0" \
+					"scan_dev_for_boot=for prefix in ${boot_prefixes}; do echo ${prefix}; run boot_a_script; done;\0" \
+				\
+					"boot_usb=setenv devnum 0; usb start; setenv boot_interface usb; run scan_dev_for_boot;\0" \
+					"boot_sata=setenv devnum 0; scsi scan; scsi dev 0; setenv boot_interface scsi; run scan_dev_for_boot;\0" \
+					"boot_mmc0=setenv devnum 0; setenv boot_interface mmc; run scan_dev_for_boot;\0" \
+					"boot_syno=setenv devnum 0; setenv boot_interface mmc; run scan_dev_for_boot;\0" \
+				\
+					"bootcmd_normal=setenv scriptname syno.scr; run boot_syno;\0" \
+					"bootcmd_button=setenv scriptname boot.scr; for target in ${boot_targets}; do run boot_${target}; done;\0" \
+					"bootcmd=gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
+				\
+					"default_mode=0\0"
 /*
  * For booting Linux, the board info and command line data
  * have to be in the first 8 MB of memory, since this is
@@ -127,8 +113,8 @@
  * There is one exclusion from this rule - the EspressoBIN board with eMMC.
  * The eMMC device found on some EspressoBIN V7 boards has 2MB boot partition.
  */
-#define CONFIG_ENV_SIZE			(64 << 10) /* 64KiB */
-#define CONFIG_ENV_SECT_SIZE		(64 << 10) /* 64KiB sectors */
+#define CONFIG_ENV_SIZE			(64 << 7) /* 8KiB */
+#define CONFIG_ENV_SECT_SIZE		(64 << 7) /* 8KiB sectors */
 
 #ifdef CONFIG_MVEBU_NAND_BOOT
 /* In case of NAND, we want to start the environment on page boundary */
@@ -141,7 +127,7 @@ defined(CONFIG_TARGET_MVEBU_ARMADA_37XX) && defined(CONFIG_MV88E6XXX_SWITCH)
  */
 #define CONFIG_ENV_OFFSET		(0x200000 - CONFIG_ENV_SIZE)
 #else
-#define CONFIG_ENV_OFFSET		(0x200000 - CONFIG_ENV_SIZE)
+#define CONFIG_ENV_OFFSET		(0x7fb000 - 0)
 #endif
 #endif
 
