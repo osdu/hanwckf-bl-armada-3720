@@ -25,10 +25,10 @@
 					  115200, 230400, 460800, 921600 }
 
 /* Default Env vars */
-#define CONFIG_IPADDR			192.168.1.119	/* In order to cause an error */
-#define CONFIG_SERVERIP			192.168.1.254	/* In order to cause an error */
+#define CONFIG_IPADDR			192.168.32.200	/* In order to cause an error */
+#define CONFIG_SERVERIP			192.168.32.1	/* In order to cause an error */
 #define CONFIG_NETMASK			255.255.255.0
-#define CONFIG_GATEWAYIP		192.168.1.254
+#define CONFIG_GATEWAYIP		192.168.32.1
 #define CONFIG_HAS_ETH1
 #define CONFIG_HAS_ETH2
 #define CONFIG_ETHPRIME			"eth0"
@@ -45,6 +45,9 @@
 					"hostname=catdrive\0"		\
 					"netdev=eth0\0"			\
 					"ethaddr=00:11:32:00:11:32\0"	\
+					"eth1addr=00:11:32:11:22:01\0"	\
+					"eth2addr=00:11:32:11:22:02\0"	\
+					"eth3addr=00:11:32:11:22:03\0"	\
 					"image_name=zImage\0"		\
 					"console=" CONFIG_DEFAULT_CONSOLE "\0"\
 				\
@@ -60,7 +63,7 @@
 				\
 					"bootcmd_normal=setenv scriptname syno.scr; run boot_syno;\0" \
 					"bootcmd_button=setenv scriptname boot.scr; for target in ${boot_targets}; do run boot_${target}; done;\0" \
-					"bootcmd=gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
+					"bootcmd=mw 0xd00e0178 0x211; mw 0xd00e017c 0xa5e; gpio clear GPIO221; gpio set GPIO221; gpio set GPIO20; gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
 				\
 					"default_mode=0\0"
 /*
@@ -114,7 +117,7 @@
  * The eMMC device found on some EspressoBIN V7 boards has 2MB boot partition.
  */
 #define CONFIG_ENV_SIZE			(64 << 7) /* 8KiB */
-#define CONFIG_ENV_SECT_SIZE		(64 << 7) /* 8KiB sectors */
+#define CONFIG_ENV_SECT_SIZE		(64 << 6) /* 4KiB sectors */
 
 #ifdef CONFIG_MVEBU_NAND_BOOT
 /* In case of NAND, we want to start the environment on page boundary */
