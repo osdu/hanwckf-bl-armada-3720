@@ -53,7 +53,7 @@
 				\
 					"boot_targets=usb mmc0 sata\0"	\
 					"boot_prefixes=/ /boot/\0"	\
-					"boot_a_script=fatload ${boot_interface} ${devnum}:1 ${scriptaddr} ${prefix}${scriptname}; source ${scriptaddr};\0" \
+					"boot_a_script=load ${boot_interface} ${devnum}:1 ${scriptaddr} ${prefix}${scriptname}; source ${scriptaddr};\0" \
 					"scan_dev_for_boot=for prefix in ${boot_prefixes}; do echo ${prefix}; run boot_a_script; done;\0" \
 				\
 					"boot_usb=setenv devnum 0; usb start; setenv boot_interface usb; run scan_dev_for_boot;\0" \
