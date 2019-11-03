@@ -63,7 +63,7 @@
 				\
 					"bootcmd_normal=setenv scriptname syno.scr; run boot_syno;\0" \
 					"bootcmd_button=setenv scriptname boot.scr; for target in ${boot_targets}; do run boot_${target}; done;\0" \
-					"bootcmd=mw 0xd00e0178 0x211; mw 0xd00e017c 0xa5e; gpio clear GPIO221; gpio set GPIO221; gpio set GPIO20; gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
+					"bootcmd=mw 0xd00e0178 0x211;mw 0xd00e017c 0xa5e; gpio clear GPIO221;sleep 1;gpio set GPIO221;gpio set GPIO20; gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
 				\
 					"default_mode=0\0"
 /*
