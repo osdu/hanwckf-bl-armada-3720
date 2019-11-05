@@ -45,9 +45,6 @@
 					"hostname=catdrive\0"		\
 					"netdev=eth0\0"			\
 					"ethaddr=00:11:32:00:11:32\0"	\
-					"eth1addr=00:11:32:11:22:01\0"	\
-					"eth2addr=00:11:32:11:22:02\0"	\
-					"eth3addr=00:11:32:11:22:03\0"	\
 					"image_name=zImage\0"		\
 					"console=" CONFIG_DEFAULT_CONSOLE "\0"\
 				\
@@ -63,7 +60,7 @@
 				\
 					"bootcmd_normal=setenv scriptname syno.scr; run boot_syno;\0" \
 					"bootcmd_button=setenv scriptname boot.scr; for target in ${boot_targets}; do run boot_${target}; done;\0" \
-					"bootcmd=mw 0xd00e0178 0x211;mw 0xd00e017c 0xa5e; gpio clear GPIO221;sleep 1;gpio set GPIO221;gpio set GPIO20; gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
+					"bootcmd=gpio clear GPIO221;sleep 1;gpio set GPIO221;gpio set GPIO20; gpio input GPIO23; if test $? = $default_mode; then echo \"Enter button mode\"; run bootcmd_button; else echo \"Enter normal Mode\"; run bootcmd_normal; fi\0" \
 				\
 					"default_mode=0\0"
 /*
